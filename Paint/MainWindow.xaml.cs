@@ -43,7 +43,6 @@ namespace Paint
                 case "Red":
                     brush = Brushes.Red;
                     break;
-
                 case "Green":
                     brush = Brushes.Green;
                     break;
@@ -107,11 +106,6 @@ namespace Paint
         {
             isDrawing = false;
             previousPoint = new Point(-1, -1);
-
-            if (mode == "StraightLine")
-            {
-                straightLine = new Line();
-            }
         }
 
         private void Paint_MouseDown(object sender, MouseButtonEventArgs e)
@@ -119,8 +113,12 @@ namespace Paint
             isDrawing = true;
             if (mode == "StraightLine")
             {
+                if (straightLine != null)
+                {
+                    straightLine = new Line();
+                }
                 previousPoint = e.GetPosition(Paint);
-                straightLine.Stroke = brush;
+                straightLine!.Stroke = brush;
                 straightLine.StrokeThickness = thickness;
                 straightLine.X1 = previousPoint.X;
                 straightLine.Y1 = previousPoint.Y;
