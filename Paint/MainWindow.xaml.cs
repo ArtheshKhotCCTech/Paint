@@ -18,7 +18,7 @@ namespace Paint
         private Brush brush = Brushes.Black;
         private int thickness = 2;
         private string mode = "Free Draw";
-        Point previousPoint = new Point(-1, -1);
+        private Point previousPoint = new Point(-1, -1);
         public MainWindow()
         {
             InitializeComponent();
@@ -31,13 +31,13 @@ namespace Paint
 
         private void SizeChange_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string[] strings = SizeChange.SelectedItem.ToString().Split(' ');
+            string[] strings = SizeChange.SelectedItem.ToString()!.Split(' ');
             thickness = int.Parse(strings[1]);
         }
 
         private void ColorChanged_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string[] strings = ColorChanged.SelectedItem.ToString().Split(' ');
+            string[] strings = ColorChanged.SelectedItem.ToString()!.Split(' ');
             switch (strings[1])
             {
                 case "Red":
@@ -61,7 +61,7 @@ namespace Paint
 
         private void Mode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string[] strings = Mode.SelectedItem.ToString().Split(' ');
+            string[] strings = Mode.SelectedItem.ToString()!.Split(' ');
             mode = strings[1];
         }
 
