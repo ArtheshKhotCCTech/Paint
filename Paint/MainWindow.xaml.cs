@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -13,17 +11,14 @@ using System.Windows.Shapes;
 
 namespace Paint
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private Point previousPoint = new Point(-1, -1);
-        Brush brush = Brushes.Black;
-        int thickness = 2;
-        bool isDrawing = false;
-        
-
+        private bool isDrawing = false;
+        private Line straightLine = new Line();
+        private Brush brush = Brushes.Black;
+        private int thickness = 2;
+        private string mode = "Free Draw";
+        Point previousPoint = new Point(-1, -1);
         public MainWindow()
         {
             InitializeComponent();
@@ -31,64 +26,109 @@ namespace Paint
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            Paint.Children.Clear(); 
+            Paint.Children.Clear();
+        }
+
+        private void SizeChange_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string[] strings = SizeChange.SelectedItem.ToString().Split(' ');
+            thickness = int.Parse(strings[1]);
+        }
+
+        private void ColorChanged_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string[] strings = ColorChanged.SelectedItem.ToString().Split(' ');
+            switch (strings[1])
+            {
+                case "Red":
+                    brush = Brushes.Red;
+                    break;
+
+                case "Green":
+                    brush = Brushes.Green;
+                    break;
+                case "Yellow":
+                    brush = Brushes.Yellow;
+                    break;
+                case "Blue":
+                    brush = Brushes.Blue;
+                    break;
+                default:
+                    brush = Brushes.Black;
+                    break;
+            }
+        }
+
+        private void Mode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string[] strings = Mode.SelectedItem.ToString().Split(' ');
+            mode = strings[1];
         }
 
         private void Paint_MouseMove(object sender, MouseEventArgs e)
         {
-            
-            if (isDrawing)
+            if (mode == "FreeDraw")
             {
-                Point currentPosition = e.GetPosition(Paint);
-                Line line = new Line();
-                if (previousPoint.X != -1 && previousPoint.Y != -1)
+                if (isDrawing)
                 {
-                    line.X1 = previousPoint.X;
-                    line.Y1 = previousPoint.Y;
-                    line.X2 = currentPosition.X;
-                    line.Y2 = currentPosition.Y;
-                    line.Stroke = brush;
-                    line.StrokeThickness = thickness;
-                    Paint.Children.Add(line);
+                    Point currentPoint;
+                    currentPoint = e.GetPosition(Paint);
+                    Line line = new Line();
+                    if (previousPoint.X != -1 && previousPoint.Y != -1)
+                    {
+                        line.Stroke = brush;
+                        line.StrokeThickness = thickness;
+                        line.X1 = previousPoint.X;
+                        line.Y1 = previousPoint.Y;
+                        line.X2 = currentPoint.X;
+                        line.Y2 = currentPoint.Y;
+                        Paint.Children.Add(line);
+                    }
+
+                    previousPoint = currentPoint;
                 }
-                
-                previousPoint = currentPosition;
             }
-
-        }
-
-
-        private void SizeChange_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if(SizeChange.SelectedItem.ToString() != null)
+            else if (mode == "StraightLine")
             {
-                string[] str = SizeChange.SelectedItem.ToString().Split(' ');
-                thickness = int.Parse(str[1]);
+                if (isDrawing)
+                {
+                    Point currentPoint;
+                    currentPoint = e.GetPosition(Paint);
+                    if (previousPoint.X != -1 && previousPoint.Y != -1)
+                    {
+                        straightLine.X2 = currentPoint.X;
+                        straightLine.Y2 = currentPoint.Y;
+                    }
+                }
             }
-        }
-
-        private void Paint_MouseLeave(object sender, MouseEventArgs e)
-        {
-            
-        }
-
-        private void Paint_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            isDrawing = true;
-            //previousPoint = e.GetPosition(this);
         }
 
         private void Paint_MouseUp(object sender, MouseButtonEventArgs e)
         {
             isDrawing = false;
-            
-            previousPoint.X = -1;
-            previousPoint.Y = -1;
+            previousPoint = new Point(-1, -1);
+
+            if (mode == "StraightLine")
+            {
+                straightLine = new Line();
+            }
         }
 
-        private void ColorChanged_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Paint_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            
+            isDrawing = true;
+            if (mode == "StraightLine")
+            {
+                previousPoint = e.GetPosition(Paint);
+                straightLine.Stroke = brush;
+                straightLine.StrokeThickness = thickness;
+                straightLine.X1 = previousPoint.X;
+                straightLine.Y1 = previousPoint.Y;
+                straightLine.X2 = previousPoint.X;
+                straightLine.Y2 = previousPoint.Y;
+
+                Paint.Children.Add(straightLine);
+            }
         }
     }
 }

@@ -27,9 +27,9 @@
                     <ComboBoxItem Content="Blue" />
                 </ComboBox>
                 <Label Content="Mode:" Height="27" Width="47"/>
-                <ComboBox Width="84" >
-                    <ComboBoxItem Content="Straight Line" IsSelected="True" />
-                    <ComboBoxItem Content="Free Draw" />
+                <ComboBox Width="84" Name="Mode" SelectionChanged="Mode_SelectionChanged" >
+                    <ComboBoxItem Content="StraightLine" IsSelected="True" />
+                    <ComboBoxItem Content="FreeDraw" />
                 </ComboBox>
             </ToolBar>
             
